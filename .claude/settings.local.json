@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:docs.microsandbox.dev)",
+      "Bash(bundle install:*)",
+      "Bash(bundle exec rake:*)",
+      "Bash(cargo check:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
+    ],
+    "deny": []
+  }
+}
