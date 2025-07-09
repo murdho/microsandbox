@@ -6,7 +6,13 @@
       "Bash(bundle exec rake:*)",
       "Bash(cargo check:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(ruby:*)",
+      "Bash(docker build:*)",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs",
+      "Bash(docker run:*)",
+      "Bash(grep:*)"
     ],
     "deny": []
   }

@@ -5,6 +5,7 @@ require "net/http"
 require "uri"
 require "dotenv"
 require "securerandom"
+require "timeout"
 require_relative "errors"
 require_relative "command"
 require_relative "metrics"
@@ -82,10 +83,8 @@ module Microsandbox
 
       @started = true
       self
-    rescue Net::HTTPError => e
-      raise StartError, "Failed to start sandbox: #{e.message}"
     rescue StandardError => e
-      raise StartError, "Sandbox start failed: #{e.message}"
+      raise "Sandbox start failed: #{e.message}"
     end
 
     # Stop the sandbox
@@ -174,23 +173,27 @@ module Microsandbox
       response = http.request(request)
 
       unless response.is_a?(Net::HTTPSuccess)
-        raise Net::HTTPError, "HTTP #{response.code}: #{response.body}"
+        raise "HTTP #{response.code}: #{response.body}"
       end
 
       response_data = JSON.parse(response.body)
 
       if response_data["error"]
-        error = response_data["error"]
-        raise APIError.new(error["code"], error["message"])
+        error_message = response_data["error"].is_a?(Hash) ? 
+          response_data["error"]["message"] || "Unknown error" : 
+          response_data["error"]
+        raise StandardError, "API Error: #{error_message}"
       end
 
       response_data
-    rescue Net::TimeoutError => e
-      raise TimeoutError, "Request timed out: #{e.message}"
+    rescue Timeout::Error => e
+      raise StandardError, "Request timed out: #{e.message}"
     rescue JSON::ParserError => e
-      raise ClientError, "Invalid JSON response: #{e.message}"
+      raise StandardError, "Invalid JSON response: #{e.message}"
+    rescue Net::HTTPError => e
+      raise StandardError, "HTTP request failed: #{e.message}"
     rescue StandardError => e
-      raise ClientError, "HTTP request failed: #{e.message}"
+      raise StandardError, "HTTP request failed: #{e.message}"
     end
   end
 end

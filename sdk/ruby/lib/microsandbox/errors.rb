@@ -19,16 +19,6 @@ module Microsandbox
   # Raised when there's an issue with the HTTP client
   class ClientError < Error; end
 
-  # Raised when the API returns an error response
-  class APIError < Error
-    attr_reader :code, :message
-
-    def initialize(code, message)
-      @code = code
-      @message = message
-      super("API Error #{code}: #{message}")
-    end
-  end
 
   # Raised when authentication fails
   class AuthenticationError < Error; end
